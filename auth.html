@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phone Auth</title>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
+</head>
+<body>
+    <input type="text" id="phoneNumber" placeholder="+966505200930">
+    <button onclick="sendOtp()">Send OTP</button>
+    <div id="recaptcha-container"></div>
+    <input type="text" id="otp" placeholder="Enter OTP">
+    <button onclick="verifyOtp()">Verify OTP</button>
+
+    <script>
+        // Set up Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2kIovKJAxNBG86t_77gieHITWaU2uIGk",
+            authDomain: "travel-budget-manager-e4e17.firebaseapp.com",
+            // Other required config...
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'normal',
+            'callback': (response) => {
+                // reCAPTCHA solved
+            }
+        });
+
+        function sendOtp() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const appVerifier = window.recaptchaVerifier;
+            auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                }).catch((error) => {
+                    console.error("Error during sendOtp: ", error);
+                });
+        }
+
+        function verifyOtp() {
+            const otp = document.getElementById('otp').value;
+            confirmationResult.confirm(otp).then((result) => {
+                const user = result.user;
+                console.log('User is signed in:', user);
+            }).catch((error) => {
+                console.error("Error during verifyOtp: ", error);
+            });
+        }
+    </script>
+</body>
+</html>
